@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | CRMEB [ CRMEB赋能开发者，助力企业发展 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2016~2023 https://www.crmeb.com All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed CRMEB并不是自由软件，未经许可不能去掉CRMEB相关版权
-// +----------------------------------------------------------------------
-// | Author: CRMEB Team <admin@crmeb.com>
-// +----------------------------------------------------------------------
-
 import {
 	HTTP_REQUEST_URL,
 	HEADER,
@@ -20,20 +10,42 @@ import store from '../store';
  */
 function baseRequest(url, method, data, {
 	noAuth = false,
-	noVerify = false
+	isUpload = false
 }) {
 	let Url = HTTP_REQUEST_URL,
 		header = HEADER;
 
 	if (!noAuth) {
-		if (!store.state.app.token) {
+		if (!store.state.token) {
 			return Promise.reject({
-				msg: "未登录"
+				info: "未登录"
 			});
 		}
 	}
-	if (store.state.app.token) header[TOKENNAME] = 'Bearer ' + store.state.app.token;
+	if (store.state.token) header[TOKENNAME] = store.state.token;
 
+	// 如果是上传请求
+	if (isUpload) {
+		return new Promise((resolve, reject) => {
+			uni.uploadFile({
+				url: Url + '/api/' + url,
+				filePath: data.filePath,
+				name: 'file',
+				header: header,
+				success: (res) => {
+					resolve(JSON.parse(res.data))
+				},
+				fail: (msg) => {
+					console.log(msg)
+					uni.showModal({
+						title: '上传失败',
+						content: "系统开小车啦~",
+						showCancel: false,
+					})
+				}
+			});
+		})
+	}
 	return new Promise((reslove, reject) => {
 		if (uni.getStorageSync('locale')) {
 			header['Cb-lang'] = uni.getStorageSync('locale')
@@ -44,29 +56,24 @@ function baseRequest(url, method, data, {
 			header: header,
 			data: data || {},
 			success: (res) => {
-				if (noVerify)
+				console.log(res)
+				if (res.data.code == 1){
 					reslove(res.data, res);
-				else if (res.data.status == 200)
-					reslove(res.data, res);
-				else if ([110002, 110003, 110004].indexOf(res.data.status) !== -1) {
-					toLogin();
+				}else if(res.data.code == 0){
 					reject(res.data);
-				} else if (res.data.status == 100103) {
-					uni.showModal({
-						title: `提示`,
-						content: res.data.msg,
-						showCancel: false,
-						confirmText: `我知道了`
-					});
-				} else
-					reject(res.data.msg || `系统错误`);
-			},
-			fail: (msg) => {
-				let data = {
-					mag: `请求失败`,
-					status: 1 //1没网
+				}else{
+					console.log("系统开小车啦~")
 				}
-				reject(`请求失败`);
+				// if(res.data.code == 4000){
+				// 	store.commit('clear')
+				// }
+			},
+			fail: (err) => {
+				uni.showModal({
+					title: '请求失败',
+					content: "系统开小车啦~",
+					showCancel: false,
+				})
 			}
 		})
 	});
