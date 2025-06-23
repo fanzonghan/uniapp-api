@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "首页",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "uv-navbar": "/node-modules/@climblee/uv-ui/components/uv-navbar/uv-navbar"
+  }
+}

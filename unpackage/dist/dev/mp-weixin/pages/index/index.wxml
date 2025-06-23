@@ -1,0 +1,1 @@
+<view><uv-navbar vue-id="8dd740cc-1" title="日记" fixed="{{true}}" placeholder="{{true}}" bind:__l="__l" vue-slots="{{['left']}}"><view class="u-nav-slot" slot="left"></view></uv-navbar></view>

@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "uv-status-bar": "/node-modules/@climblee/uv-ui/components/uv-status-bar/uv-status-bar",
+    "uv-icon": "/node-modules/@climblee/uv-ui/components/uv-icon/uv-icon"
+  },
+  "component": true
+}

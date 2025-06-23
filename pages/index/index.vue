@@ -1,12 +1,13 @@
 <template>
 	<view>
-
+		<uv-navbar title="日记" :fixed="true" :placeholder="true">
+			<view class="u-nav-slot" slot="left"></view>
+		</uv-navbar>
 	</view>
 </template>
 
 <script>
 	import {
-		getIndexData
 	} from '@/api/api.js';
 	export default {
 		components: {
@@ -18,9 +19,7 @@
 			}
 		},
 		onLoad() {
-			getIndexData().then(res=>{
-				
-			})
+			
 		},
 		methods: {
 			
